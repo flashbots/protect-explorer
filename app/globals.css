@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'dogicapixel';
+  src: url('/dogicapixel.otf') format('opentype');
+}
+
+.font-dogicapixel {
+  font-family: 'dogicapixel', sans-serif;
+}
+
+:root {
+  --hero-1: color(display-p3 0.1889 0.0624 0.4576);
+  --hero-2: color(display-p3 0.2802 0.062 0.558);
+  --hero-3: color(display-p3 0.37 0.1073 0.6327);
+  --hero-4: color(display-p3 0.4853 0.1469 0.6927);
+  --hero-5: color(display-p3 0.5891 0.232 0.808);
+  --hero-6: color(display-p3 0.888 0.312 0.648);
+  --hero-7: color(display-p3 0.9569 0.4505 0.3725);
+  --hero-8: color(display-p3 0.9765 0.5686 0.3647);
+  --hero-9: color(display-p3 0.9843 0.651 0.451);
+  --hero-10: color(display-p3 0.9922 0.7804 0.5765);
+  --hero-11: color(display-p3 1 0.9095 0.6766);
+  --hero-12: color(display-p3 1 0.9567 0.74);
+  --hero-13: color(display-p3 1 0.9961 0.898);
+  --hero-14: color(display-p3 1 0.9922 0.8196);
+  --hero-15: color(display-p3 1 0.9961 0.898);
+
+  padding: 0;
+}
+
+body {
+  background-color: color(display-p3 1 0.9961 0.898)
+}
