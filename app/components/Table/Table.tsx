@@ -1,4 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchCSV } from '../../lib/fetchCSV';
+import { fetchEthUSD } from '../../lib/fetchEthUSD';
+import DatePicker from '../DatePicker';
+import Pagination from '../Pagination/Pagination';
+import TransactionsTable from './Transactions';
+import LeaderboardTable from './Leaderboard';
 import styles from './Table.module.css';
 
 const colors = [
@@ -18,10 +24,89 @@ const colors = [
 
 const Table: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'leaderboard' | 'transactions'>('leaderboard');
+  const [data, setData] = useState<any[]>([]);
+  const [ethPrices, setEthPrices] = useState<{ [date: string]: number }>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [dateRange, setDateRange] = useState<'today' | 'this_week' | 'this_month'>('today');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const resultsPerPage = 25;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const dates = getDateRange(dateRange);
+        const csvData = await fetchCSV(dates);
+        setData(csvData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [dateRange]);
+
+  useEffect(() => {
+    setDateRange('today');
+  }, []);
 
   const handleTabChange = (tab: 'leaderboard' | 'transactions') => {
     setActiveTab(tab);
+    setCurrentPage(1); // Reset to first page when changing tabs
   };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const getDateRange = (range: 'today' | 'this_week' | 'this_month'): string[] => {
+    const dates: string[] = [];
+    const today = new Date();
+    today.setDate(today.getDate() - 2); // Data is often two days behind
+  
+    if (range === 'today') {
+      dates.push(formatDate(today));
+    } else if (range === 'this_week') {
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        dates.push(formatDate(date));
+      }
+    } else if (range === 'this_month') {
+      for (let i = 0; i < 30; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        dates.push(formatDate(date));
+      }
+    }
+    return dates;
+  };
+
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const getEthPrice = async (date: string) => {
+    if (!ethPrices[date]) {
+      try {
+        const price = await fetchEthUSD(date);
+        setEthPrices(prevPrices => ({ ...prevPrices, [date]: price }));
+      } catch (error) {
+        console.error(`Error fetching ETH price for ${date}:`, error);
+      }
+    }
+    return ethPrices[date];
+  };
+
+  const sortedData = [...data].sort((a, b) => parseFloat(b.refund_value_eth) - parseFloat(a.refund_value_eth));
+  const paginatedData = sortedData.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
+
+  const totalPages = Math.ceil(sortedData.length / resultsPerPage);
 
   return (
     <div className={styles.tableContainer}>
@@ -39,99 +124,17 @@ const Table: React.FC = () => {
           Recent Transactions
         </button>
       </div>
+      <DatePicker onDateChange={setDateRange} />
       <div className={styles.tableContent}>
-        {activeTab === 'leaderboard' ? (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className={styles.tableHeading}>
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden md:table-cell">
-                  Project
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Logo
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Total Txns
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Refunds (ETH)
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden md:table-cell">
-                  Refunds ($)
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-black divide-y divide-gray-200">
-              {[...Array(10)].map((_, index) => (
-                <tr key={index}>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    Project Name
-                  </td>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    <img src="/path/to/logo.png" alt="Logo" className="h-10 w-10"/>
-                  </td>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    123
-                  </td>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    1.23
-                  </td>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    $456
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {loading ? (
+          <div>Loading...</div>
+        ) : activeTab === 'leaderboard' ? (
+          <LeaderboardTable />
         ) : (
-            <table className="min-w-full divide-y divide-gray-200">
-            <thead className={styles.tableHeading}>
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Tx
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
-                  Logo
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
-                  Tags
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Builder
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Refund (ETH)
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
-                  Refund ($)
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-black divide-y divide-gray-200">
-              {[...Array(10)].map((_, index) => (
-                <tr key={index}>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    Tx ID
-                  </td>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    <img src="/path/to/logo.png" alt="Logo" className="h-10 w-10"/>
-                  </td>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    Tag
-                  </td>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    Name
-                  </td>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    1.23
-                  </td>
-                  <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell" style={{ color: `var(${colors[index % colors.length]})` }}>
-                    $456
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <>
+            <TransactionsTable data={paginatedData} colors={colors} getEthPrice={getEthPrice} />
+            <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
+          </>
         )}
       </div>
     </div>
