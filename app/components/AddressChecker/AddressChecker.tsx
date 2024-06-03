@@ -49,27 +49,27 @@ const AddressChecker: React.FC = () => {
     setTotalRefund(totalRefundValue || 0);
   };
 
-  const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-  };
-
   return (
-    <div className="absolute top-[120px] md:top-[350px] h-[330px] md:h-[250px] w-4/5 md:w-full left-1/2 transform -translate-x-1/2 flex flex-col items-center bg-black border-2 border-white rounded-lg p-5" style={{ zIndex: '1', maxWidth: '800px' }}>
+    <div className="absolute top-[120px] md:top-[350px] w-4/5 md:w-full left-1/2 transform -translate-x-1/2 flex flex-col items-center bg-black border-2 border-white rounded-lg p-5" style={{ zIndex: '1', maxWidth: '800px', height: '250px' }}>
       <div className="flex flex-col md:flex-row mb-2.5 w-full">
         <input
           type="text"
-          value={formatAddress(address)}
+          value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Enter your address"
           className="border border-gray-300 p-2 rounded mb-2.5 md:mb-0 mr-0 md:mr-2.5 flex-grow"
+          style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
         />
         {loading ? (
-          <div className="p-2 rounded text-white text-center border-none cursor-not-allowed" style={{ backgroundColor: 'color(display-p3 0.37 0.1073 0.6327)' }}>Loading...</div>
+          <div className="p-2 rounded text-white border-none cursor-not-allowed" style={{ backgroundColor: 'color(display-p3 0.37 0.1073 0.6327)' }}>Loading...</div>
         ) : (
           <button onClick={handleCheckAddress} className="p-2 rounded text-white border-none cursor-pointer no-underline hover:bg-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed" style={{ backgroundColor: 'color(display-p3 0.37 0.1073 0.6327)' }}>
             Check
           </button>
         )}
+      </div>
+      <div className="mt-2 md:mt-8 text-white text-2xl" style={{ visibility: checked ? 'hidden' : 'visible' }}>
+        <p>See what you've saved with Protect</p>
       </div>
       <div className="my-2 text-white" style={{ visibility: checked ? 'visible' : 'hidden' }}>
         <p>Total Refund: {totalRefund} ETH</p>
