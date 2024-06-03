@@ -64,16 +64,6 @@ const AddressChecker: React.FC = () => {
     }
 
     setAddress(resolvedAddress);
-    console.log(resolvedAddress);
-
-    const dates = getDateRange(30); // Fetch 30 days to keep it faster
-    const missingDates = dates.filter(date => !state.data.some(transaction => transaction.block_time.startsWith(date)));
-
-    if (missingDates.length > 0) {
-      setLoading(true);
-      await fetchCSV(missingDates);
-      setLoading(false);
-    }
 
     const matchingTransactions = state.data.filter(transaction => transaction.user_tx_from === resolvedAddress);
     const totalRefundValue = matchingTransactions.reduce((total, transaction) => {
