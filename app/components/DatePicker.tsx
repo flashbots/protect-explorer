@@ -1,15 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface DatePickerProps {
   onDateChange: (range: 'today' | 'this_week' | 'this_month') => void;
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({ onDateChange }) => {
+  const [activeRange, setActiveRange] = useState<'today' | 'this_week' | 'this_month'>('today');
+
+  const handleDateChange = (range: 'today' | 'this_week' | 'this_month') => {
+    setActiveRange(range);
+    onDateChange(range);
+  };
+
   return (
     <div className='text-center'>
-      <button className='border border-white rounded my-4 mr-4 py-2 px-4 text-white' onClick={() => onDateChange('today')}>Today</button>
-      <button className='border border-white rounded my-4 mr-4 py-2 px-4 text-white' onClick={() => onDateChange('this_week')}>This Week</button>
-      <button className='border border-white rounded my-4 mr-4 py-2 px-4 text-white' onClick={() => onDateChange('this_month')}>This Month</button>
+      <button
+        className={`border rounded my-4 mr-4 py-2 px-4 ${activeRange === 'today' ? 'bg-white text-black' : 'text-white'}`}
+        style={activeRange === 'today' ? { borderColor: 'color(display-p3 0.37 0.1073 0.6327)' } : {}}
+        onClick={() => handleDateChange('today')}
+      >
+        Today
+      </button>
+      <button
+        className={`border rounded my-4 mr-4 py-2 px-4 ${activeRange === 'this_week' ? 'bg-white text-black' : 'text-white'}`}
+        style={activeRange === 'this_week' ? { borderColor: 'color(display-p3 0.37 0.1073 0.6327)' } : {}}
+        onClick={() => handleDateChange('this_week')}
+      >
+        This Week
+      </button>
+      <button
+        className={`border rounded my-4 mr-4 py-2 px-4 ${activeRange === 'this_month' ? 'bg-white text-black' : 'text-white'}`}
+        style={activeRange === 'this_month' ? { borderColor: 'color(display-p3 0.37 0.1073 0.6327)' } : {}}
+        onClick={() => handleDateChange('this_month')}
+      >
+        This Month
+      </button>
     </div>
   );
 };

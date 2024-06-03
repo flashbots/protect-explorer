@@ -1,10 +1,7 @@
-import type { Metadata } from "next";
-import "./globals.css";
+'use client'
 
-export const metadata: Metadata = {
-  title: "Flashbots Protect Explorer",
-  description: "Get protected today",
-};
+import "./globals.css";
+import { DataProvider } from "./context/DataContext";
 
 export default function RootLayout({
   children,
@@ -13,7 +10,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-dogicapixel">{children}</body>
+      <body className="font-dogicapixel">
+        <DataProvider>
+          {children}
+        </DataProvider>
+      </body>
     </html>
   );
 }

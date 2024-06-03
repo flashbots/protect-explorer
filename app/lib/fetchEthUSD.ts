@@ -1,4 +1,6 @@
+// src/lib/fetchEthUSD.tsx
 import axios from 'axios';
+import { useDataContext } from '../context/DataContext';
 
 const startingPrices: { [date: string]: number } = {
   '2024-05-29': 3840.69,
@@ -30,22 +32,36 @@ const startingPrices: { [date: string]: number } = {
   '2024-05-03': 2988.55,
   '2024-05-02': 2976.09,
   '2024-05-01': 3018.55,
-}
+};
 
-export const fetchEthUSD = async (date: string): Promise<number> => {
-  if (startingPrices[date]) {
-    return startingPrices[date];
-  }
-  try {
-    const [year, month, day] = date.split('-');
-    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/ethereum/history`, {
-      params: {
-        date: `${day}-${month}-${year}`,
-      },
-    });
-    return response.data.market_data.current_price.usd;
-  } catch (error) {
-    console.error('Error fetching ETH price:', error);
-    throw error;
-  }
+export const useFetchEthUSD = () => {
+  const { state, dispatch } = useDataContext();
+
+  const fetchEthUSD = async (date: string): Promise<number | undefined> => {
+    if (state.ethPrices[date]) {
+      return state.ethPrices[date];
+    }
+
+    if (startingPrices[date]) {
+      dispatch({ type: 'SET_ETH_PRICE', payload: { date, price: startingPrices[date] } });
+      return startingPrices[date];
+    }
+
+    try {
+      const [year, month, day] = date.split('-');
+      const response = await axios.get(`https://api.coingecko.com/api/v3/coins/ethereum/history`, {
+        params: {
+          date: `${day}-${month}-${year}`,
+        },
+      });
+      const price = response.data.market_data.current_price.usd;
+      dispatch({ type: 'SET_ETH_PRICE', payload: { date, price } });
+      return price;
+    } catch (error) {
+      console.error('Error fetching ETH price:', error);
+      return undefined;
+    }
+  };
+
+  return fetchEthUSD;
 };

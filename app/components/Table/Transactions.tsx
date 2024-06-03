@@ -1,20 +1,30 @@
-import React from 'react';
+// src/components/Transactions.tsx
+import React, { useEffect } from 'react';
 import styles from './Table.module.css';
 import EthPrice from '../EthPrice';
 
 interface TransactionsProps {
   data: any[];
   colors: string[];
-  getEthPrice: (date: string) => Promise<number | undefined>;
+  state: any;
+  fetchEthUSD: (date: string) => Promise<number | undefined>;
 }
 
-const Transactions: React.FC<TransactionsProps> = ({ data, colors, getEthPrice }) => {
+const Transactions: React.FC<TransactionsProps> = ({ data, colors, state, fetchEthUSD }) => {
   const formatBuilderName = (name: string) => {
     if (name.includes('beaverbuild.org')) return 'beaver';
     if (name.includes('Illuminate Dmocratize Dstribute') || name.includes('Illuminate Dmocrtz Dstrib Prtct')) return 'flashbots';
     if (name.includes('Titan') || name.includes('titanbuilder.xyz')) return 'titan';
     if (name.includes('@rsyncbuilder') || name.includes('rsync-builder.xyz')) return 'rsync';
     return name;
+  };
+
+  const getEthPrice = async (date: string) => {
+    if (!state.ethPrices[date]) {
+      const price = await fetchEthUSD(date);
+      return price;
+    }
+    return state.ethPrices[date];
   };
 
   return (
@@ -38,6 +48,7 @@ const Transactions: React.FC<TransactionsProps> = ({ data, colors, getEthPrice }
       <tbody className="bg-black divide-y divide-gray-200">
         {data.map((transaction, index) => {
           const date = transaction.block_time.split(' ')[0].replace(/\//g, '-');
+          
           return (
             <tr key={index}>
               <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>

@@ -7,20 +7,19 @@ interface EthPriceProps {
 }
 
 const EthPrice: React.FC<EthPriceProps> = ({ date, ethAmount, getEthPrice }) => {
-    const [usdValue, setUsdValue] = useState<number | null>(null);
-  
-    useEffect(() => {
-      const fetchPrice = async () => {
-        const price = await getEthPrice(date);
-        if (price) {
-          setUsdValue(parseFloat(ethAmount) * price);
-        }
-      };
-  
-      fetchPrice();
-    }, [date, ethAmount, getEthPrice]);
-  
-    return usdValue ? <>${usdValue.toFixed(2)}</> : <>Loading...</>;
+  const [usdPrice, setUsdPrice] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchPrice = async () => {
+      const price = await getEthPrice(date);
+      if (price !== undefined) {
+        setUsdPrice(price * parseFloat(ethAmount));
+      }
+    };
+    fetchPrice();
+  }, [date, ethAmount, getEthPrice]);
+
+  return <span>{usdPrice ? usdPrice.toFixed(2) : 'Loading...'}</span>;
 };
 
 export default EthPrice;
