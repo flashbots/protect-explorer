@@ -105,7 +105,7 @@ const AddressChecker: React.FC = () => {
       </div>
       {!checked ? (
         <div className="mt-2 md:mt-8 text-white text-2xl">
-          <p>See what you've saved with Protect</p>
+          <p>See what you&apos;ve saved with Protect</p>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center w-full h-full">
