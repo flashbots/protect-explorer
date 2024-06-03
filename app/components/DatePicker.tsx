@@ -5,7 +5,7 @@ interface DatePickerProps {
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({ onDateChange }) => {
-  const [activeRange, setActiveRange] = useState<'today' | 'this_week' | 'this_month'>('today');
+  const [activeRange, setActiveRange] = useState<'today' | 'this_week' | 'this_month'>('this_month');
 
   const handleDateChange = (range: 'today' | 'this_week' | 'this_month') => {
     setActiveRange(range);

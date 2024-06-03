@@ -66,7 +66,7 @@ const AddressChecker: React.FC = () => {
     setAddress(resolvedAddress);
     console.log(resolvedAddress);
 
-    const dates = getDateRange(90); // Fetch 90 days of data for completeness
+    const dates = getDateRange(30); // Fetch 30 days to keep it faster
     const missingDates = dates.filter(date => !state.data.some(transaction => transaction.block_time.startsWith(date)));
 
     if (missingDates.length > 0) {
@@ -113,7 +113,7 @@ const AddressChecker: React.FC = () => {
             <p>Total Refund: {totalRefund} ETH</p>
           </div>
           <div className="my-2 text-white" style={{ visibility: totalRefund === 0 ? 'visible' : 'hidden' }}>
-            <p>No transactions found for this address in the last 3 months.</p>
+            <p>No transactions found for this address in the last 30 days.</p>
           </div>
           <div className="mt-6">
             <a

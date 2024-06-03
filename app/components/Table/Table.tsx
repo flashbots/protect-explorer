@@ -20,7 +20,7 @@ const Table: React.FC = () => {
   const fetchCSV = useFetchCSV();
   const fetchEthUSD = useFetchEthUSD();
   const [activeTab, setActiveTab] = useState<'leaderboard' | 'transactions'>('transactions');
-  const [dateRange, setDateRange] = useState<'today' | 'this_week' | 'this_month'>('today');
+  const [dateRange, setDateRange] = useState<'today' | 'this_week' | 'this_month'>('this_month');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const resultsPerPage = 25;
 
