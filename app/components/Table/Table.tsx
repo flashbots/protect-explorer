@@ -1,9 +1,8 @@
-// src/components/Table.tsx
 import React, { useEffect, useState } from 'react';
 import { useFetchCSV } from '../../lib/fetchCSV';
 import { useFetchEthUSD } from '../../lib/fetchEthUSD';
 import { useDataContext } from '../../context/DataContext';
-import DatePicker from '../DatePicker';
+import DatePicker from '../DatePicker/DatePicker';
 import Pagination from '../Pagination/Pagination';
 import TransactionsTable from './Transactions';
 import LeaderboardTable from './Leaderboard';
@@ -74,17 +73,17 @@ const Table: React.FC = () => {
   return (
     <div className={styles.tableContainer}>
       <div className={styles.nav}>
-        <button className={`${styles.navLink} ${activeTab === 'transactions' ? styles.active : ''}`} onClick={() => handleTabChange('transactions')}>
+        <button className={`${styles.navTab} ${activeTab === 'transactions' ? styles.active : ''}`} onClick={() => handleTabChange('transactions')}>
           Recent Transactions
         </button>
-        <button className={`${styles.navLink} ${activeTab === 'leaderboard' ? styles.active : ''}`} onClick={() => handleTabChange('leaderboard')}>
+        <button className={`${styles.navTab} ${activeTab === 'leaderboard' ? styles.active : ''}`} onClick={() => handleTabChange('leaderboard')}>
           Leaderboard
         </button>
       </div>
       <DatePicker onDateChange={setDateRange} />
       <div className={styles.tableContent}>
         {state.loading ? (
-          <div>Loading...</div>
+          <div className='pt-10'>Loading...</div>
         ) : activeTab === 'leaderboard' ? (
           <LeaderboardTable />
         ) : (

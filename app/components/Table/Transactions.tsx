@@ -28,7 +28,7 @@ const Transactions: React.FC<TransactionsProps> = ({ data, colors, state, fetchE
   };
 
   return (
-    <table className="min-w-full divide-y divide-gray-200 text-[10px] md:text-sm border border-white">
+    <table className="min-w-full divide-y divide-gray-200 text-[10px] md:text-sm border border-2 border-white">
       <thead className="bg-durple">
         <tr>
           <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">

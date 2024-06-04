@@ -75,7 +75,10 @@ const AddressChecker: React.FC = () => {
   };
 
   return (
-    <div className="absolute top-[120px] md:top-[120px] w-4/5 md:w-full h-[330px] md:h-[250px] left-1/2 transform -translate-x-1/2 flex flex-col items-center bg-spurple border-2 border-white rounded-lg p-5" style={{ zIndex: '1', maxWidth: '800px' }}>
+    <div className="absolute top-[120px] md:top-[120px] w-4/5 md:w-full h-[330px] md:h-[300px] left-1/2 transform -translate-x-1/2 flex flex-col items-center bg-spurple border-2 border-white rounded-lg p-5" style={{ zIndex: '1', maxWidth: '800px' }}>
+      <div className="mt-2 text-white text-xl mb-5">
+        <p>See what you&apos;ve saved with Protect</p>
+      </div>
       <div className="flex flex-col md:flex-row mb-2.5 w-full">
         <input
           type="text"
@@ -93,30 +96,28 @@ const AddressChecker: React.FC = () => {
           </button>
         )}
       </div>
-      {!checked ? (
-        <div className="mt-2 md:mt-8 text-white text-2xl">
-          <p>See what you&apos;ve saved with Protect</p>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center w-full h-full">
-          <div className="my-2 text-white">
-            <p>Total Refund: {totalRefund} ETH</p>
-          </div>
-          <div className="my-2 text-white" style={{ visibility: totalRefund === 0 ? 'visible' : 'hidden' }}>
-            <p>No transactions found for this address in the last 30 days.</p>
-          </div>
-          <div className="mt-6">
-            <a
-              href="https://protect.flashbots.net"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 rounded text-durple border-durple cursor-pointer no-underline hover:bg-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed bg-white"
-            >
-              Get Protected!
-            </a>
-          </div>
-        </div>
-      )}
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        {checked && (
+          <>
+            <div className="my-2 text-white">
+              <p>Total Refund: {totalRefund} ETH</p>
+            </div>
+            <div className="my-2 text-white" style={{ visibility: totalRefund === 0 ? 'visible' : 'hidden' }}>
+              <p>No transactions found for this address in the last 30 days.</p>
+            </div>
+            <div className="mt-6">
+              <a
+                href="https://protect.flashbots.net"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-4 rounded text-durple border-durple cursor-pointer no-underline hover:bg-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed bg-white"
+              >
+                Get Protected!
+              </a>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };

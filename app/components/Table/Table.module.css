@@ -1,60 +1,68 @@
 .tableContainer {
     position: absolute;
-    top: 400px;
+    top: 480px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
     background-color: color(display-p3 0.37 0.1073 0.6327);
     border: 2px solid white;
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 0px 10px 10px 10px;
     width: 80%;
     max-width: 1200px;
+    padding: 40px 8px 0px 8px;
 }
 
 .nav {
-    display: flex;
     justify-content: space-around;
-    margin-bottom: 20px;
+    position: absolute;
+    left: -2px;
+    top: -40px;
+    width: 100%;
 }
-  
-.navLink {
+
+.navTab {
     color: white;
-    background: none;
-    border: none;
+    background: color(display-p3 0.1889 0.0624 0.4576);
+    border: 2px solid white;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 12px;
     padding: 10px 20px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, border-color 0.3s;
+    position: relative;
+    top: -2px;
+    flex: 1; 
+    text-align: center;
 }
-  
-.navLink:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-  
+
 .active {
     font-weight: bold;
-    text-decoration: underline;
+    background-color: color(display-p3 0.37 0.1073 0.6327);
+    border-bottom: 2px solid color(display-p3 0.37 0.1073 0.6327);
 }
-  
+
+.contentContainer {
+    padding: 20px;
+}
+
 .tableContent {
     color: white;
     font-size: 16px;
-}
-  
-.tableHeading {
-    color: white;
-    background-color: color(display-p3 0.37 0.1073 0.6327);
-    border: 1px solid white;
+    margin-top: 58px;
 }
 
 @media (max-width: 768px) {
     .tableContainer {
-        top: 50%;
+        top: 55%;
         padding: 0;
     }
 
-    .navLink {
-        font-size: 14px;
+    .nav {
+        top: -36px;
+    }
+
+    .navTab {
+        font-size: 10px;
     }
 }
