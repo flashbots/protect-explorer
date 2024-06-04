@@ -110,8 +110,7 @@ const AddressChecker: React.FC = () => {
               href="https://protect.flashbots.net"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-4 rounded text-white border-none cursor-pointer no-underline hover:bg-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed"
-              style={{ backgroundColor: 'color(display-p3 0.37 0.1073 0.6327)' }}
+              className="p-4 rounded text-durple border-durple cursor-pointer no-underline hover:bg-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed bg-white"
             >
               Get Protected!
             </a>
