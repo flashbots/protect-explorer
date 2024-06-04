@@ -21,7 +21,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, handle
           className={styles.pageButton}
           onClick={() => handlePageChange(startPage - 1)}
         >
-          ← Previous pages
+          ← Previous
         </button>
       )}
       {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
@@ -41,7 +41,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, handle
           className={styles.pageButton}
           onClick={() => handlePageChange(endPage + 1)}
         >
-          More pages →
+          More →
         </button>
       )}
     </div>
