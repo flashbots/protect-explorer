@@ -19,6 +19,11 @@
 
 @media (max-width: 768px) {
     .pagination {
-        font-size: 10px;
+        font-size: 8px;
+    }
+
+    .pageButton {
+        margin: 0px 4px;
+        padding: 2px;
     }
 }
