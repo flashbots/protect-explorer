@@ -39,18 +39,7 @@ const Hero = () => {
           ></div>
         ))}
       </div>
-      <div className={styles.heroContent}>
-        <div className='text-white text-4xl md:text-8xl font-bold'>
-          Flashbots Protect
-        </div>
-      </div>
-      <Stars count={100} />
-      <div className={styles.moon} style={{ right: '30%' }}></div>
-      <div className={styles.cloud} style={{ top: '10%', left: '-10%' }}></div>
-      <div className={styles.cloud} style={{ top: '30%', left: '-20%', animationDelay: '5s' }}></div>
-      <div className={styles.cloud2} style={{ top: '20%', left: '-10%' }}></div>
-      <div className={styles.cloud3} style={{ top: '5%', left: '-10%' }}></div>
-      <div className={styles.cloud3} style={{ top: '25%', left: '-10%', animationDelay: '3s' }}></div>
+      <Stars count={200} />
     </div>
   );
 };

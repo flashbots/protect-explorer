@@ -10,7 +10,7 @@ import LeaderboardTable from './Leaderboard';
 import styles from './Table.module.css';
 
 const colors = [
-  '--hero-4', '--hero-5', '--hero-6', '--hero-7', '--hero-8',
+  '--hero-6', '--hero-7', '--hero-8',
   '--hero-9', '--hero-10', '--hero-11', '--hero-12', '--hero-13',
   '--hero-14', '--hero-15',
 ];

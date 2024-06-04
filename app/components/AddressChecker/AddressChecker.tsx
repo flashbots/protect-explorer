@@ -75,7 +75,7 @@ const AddressChecker: React.FC = () => {
   };
 
   return (
-    <div className="absolute top-[120px] md:top-[350px] w-4/5 md:w-full h-[330px] md:h-[250px] left-1/2 transform -translate-x-1/2 flex flex-col items-center bg-black border-2 border-white rounded-lg p-5" style={{ zIndex: '1', maxWidth: '800px' }}>
+    <div className="absolute top-[120px] md:top-[120px] w-4/5 md:w-full h-[330px] md:h-[250px] left-1/2 transform -translate-x-1/2 flex flex-col items-center bg-spurple border-2 border-white rounded-lg p-5" style={{ zIndex: '1', maxWidth: '800px' }}>
       <div className="flex flex-col md:flex-row mb-2.5 w-full">
         <input
           type="text"

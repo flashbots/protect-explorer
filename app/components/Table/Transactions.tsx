@@ -12,9 +12,9 @@ interface TransactionsProps {
 
 const Transactions: React.FC<TransactionsProps> = ({ data, colors, state, fetchEthUSD }) => {
   const formatBuilderName = (name: string) => {
-    if (name.includes('beaverbuild.org')) return 'beaver';
-    if (name.includes('Illuminate Dmocratize Dstribute') || name.includes('Illuminate Dmocrtz Dstrib Prtct')) return 'flashbots';
-    if (name.includes('Titan') || name.includes('titanbuilder.xyz')) return 'titan';
+    if (name.includes('beaverbuild.org')) return 'Beaver';
+    if (name.includes('Illuminate Dmocratize Dstribute') || name.includes('Illuminate Dmocrtz Dstrib Prtct')) return 'Flashbots';
+    if (name.includes('Titan') || name.includes('titanbuilder.xyz')) return 'Titan';
     if (name.includes('@rsyncbuilder') || name.includes('rsync-builder.xyz')) return 'rsync';
     return name;
   };
@@ -45,7 +45,7 @@ const Transactions: React.FC<TransactionsProps> = ({ data, colors, state, fetchE
           </th>
         </tr>
       </thead>
-      <tbody className="bg-black divide-y divide-gray-200">
+      <tbody className="divide-y divide-gray-200 border border-white">
         {data.map((transaction, index) => {
           const date = transaction.block_time.split(' ')[0].replace(/\//g, '-');
           
