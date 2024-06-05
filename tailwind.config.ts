@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         'spurple': 'color(display-p3 0.1889 0.0624 0.4576)',
         'durple': 'color(display-p3 0.37 0.1073 0.6327)',
+        'brink': 'color(display-p3 0.888 0.312 0.648)'
       },
     },
   },

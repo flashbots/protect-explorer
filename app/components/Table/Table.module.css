@@ -1,6 +1,6 @@
 .tableContainer {
     position: absolute;
-    top: 480px;
+    top: 650px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -54,7 +54,7 @@
 
 @media (max-width: 768px) {
     .tableContainer {
-        top: 55%;
+        top: 82%;
         padding: 0;
     }
 

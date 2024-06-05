@@ -1,6 +1,4 @@
-// src/components/Transactions.tsx
-import React, { useEffect } from 'react';
-import styles from './Table.module.css';
+import React from 'react';
 import EthPrice from '../EthPrice';
 
 interface TransactionsProps {
