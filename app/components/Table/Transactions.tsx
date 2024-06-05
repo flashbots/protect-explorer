@@ -52,8 +52,8 @@ const Transactions: React.FC<TransactionsProps> = ({ data, colors, state, fetchE
           return (
             <tr key={index}>
               <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-                <a href={`https://etherscan.io/tx/${transaction.user_tx_hash}`} target="_blank" rel="noopener noreferrer">
-                  {transaction.user_tx_hash.slice(0, 5)}...{transaction.user_tx_hash.slice(-3)}
+                <a href={`https://etherscan.io/tx/${transaction.refund_tx_hash}`} target="_blank" rel="noopener noreferrer">
+                  {transaction.refund_tx_hash.slice(0, 5)}...{transaction.refund_tx_hash.slice(-3)}
                 </a>
               </td>
               <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
