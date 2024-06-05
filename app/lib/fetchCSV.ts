@@ -1,4 +1,3 @@
-// src/lib/fetchCSV.tsx
 import axios from 'axios';
 import Papa from 'papaparse';
 import { useDataContext } from '../context/DataContext';
