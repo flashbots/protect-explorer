@@ -43,7 +43,7 @@ const Metrics: React.FC = () => {
             totalProtectedUsers: result1.result.rows[0].num_protect_user,
             totalProtectedDexVolume: result2.result.rows[0].total_volume,
           });
-          setDynamicVolume(result2.result.rows[0].total_volume); 
+          setDynamicVolume(result2.result.rows[0].total_volume); // Start from the current value
         }
       } catch (error) {
         console.error('Error fetching metrics:', error);
@@ -59,8 +59,26 @@ const Metrics: React.FC = () => {
   useEffect(() => {
     const calculateDynamicVolume = async () => {
       if (state.data.length > 0) {
-        const refundValues = state.data.map((d: any) => parseFloat(d.refund_value_eth)).filter((v: any) => !isNaN(v));
-        const medianRefundValueEth = calculateMedian(refundValues);
+        const dailySums: number[] = [];
+        const dataByDate: { [key: string]: number[] } = {};
+
+        state.data.forEach((d: any) => {
+          const date = d.date;
+          const value = parseFloat(d.refund_value_eth);
+          if (!isNaN(value)) {
+            if (!dataByDate[date]) {
+              dataByDate[date] = [];
+            }
+            dataByDate[date].push(value);
+          }
+        });
+
+        for (const date in dataByDate) {
+          const dailySum = dataByDate[date].reduce((sum, value) => sum + value, 0);
+          dailySums.push(dailySum);
+        }
+
+        const medianRefundValueEth = calculateMedian(dailySums);
 
         const today = new Date().toISOString().split('T')[0];
         const ethUsdPriceToday = await fetchEthUSD(today);
@@ -71,6 +89,8 @@ const Metrics: React.FC = () => {
         }
 
         const medianRefundValueUsd = medianRefundValueEth * ethUsdPriceToday;
+
+        console.log('Median Refund Value (USD):', medianRefundValueUsd);
 
         const interval = setInterval(() => {
           setDynamicVolume((prevVolume) => prevVolume + medianRefundValueUsd / 3600);

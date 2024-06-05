@@ -14,7 +14,7 @@ export const useFetchCSV = () => {
       header: true,
       skipEmptyLines: true,
     });
-    return parsedData.data;
+    return parsedData.data.map((entry: any) => ({ ...entry, date }));
   };
 
   const fetchCSV = async (dates: string[]): Promise<void> => {
