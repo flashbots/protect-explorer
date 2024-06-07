@@ -38,3 +38,14 @@
         width: 100%;
     }
 }
+
+@media (max-width: 440px) {
+    .dateTab {
+        font-size: 8px;
+    }
+
+    .datePicker {
+        top: 26px;
+        width: 100%;
+    }
+}

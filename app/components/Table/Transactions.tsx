@@ -29,16 +29,16 @@ const Transactions: React.FC<TransactionsProps> = ({ data, colors, state, fetchE
     <table className="min-w-full divide-y divide-gray-200 text-[10px] md:text-sm border border-2 border-white">
       <thead className="bg-durple">
         <tr>
-          <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
             Tx
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
             Builder
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
             Refund (ETH)
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
+          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
             Refund ($)
           </th>
         </tr>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDataContext } from '../../context/DataContext';
 import { useFetchEthUSD } from '../../lib/fetchEthUSD';
 
@@ -16,11 +16,13 @@ const Metrics: React.FC = () => {
   const [metrics, setMetrics] = useState<{ 
     totalProtectedTxes: number | null, 
     totalProtectedUsers: number | null,
-    totalProtectedDexVolume: number | null }>
-  ({ totalProtectedTxes: null, totalProtectedUsers: null, totalProtectedDexVolume: null });
+    totalProtectedDexVolume: number | null }
+  >({ totalProtectedTxes: null, totalProtectedUsers: null, totalProtectedDexVolume: null });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [dynamicVolume, setDynamicVolume] = useState<number>(0);
+
+  const calculationDone = useRef(false);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -58,7 +60,7 @@ const Metrics: React.FC = () => {
 
   useEffect(() => {
     const calculateDynamicVolume = async () => {
-      if (state.data.length > 0) {
+      if (state.data.length > 0 && !calculationDone.current) {
         const dailySums: number[] = [];
         const dataByDate: { [key: string]: number[] } = {};
 
@@ -95,6 +97,8 @@ const Metrics: React.FC = () => {
         const interval = setInterval(() => {
           setDynamicVolume((prevVolume) => prevVolume + medianRefundValueUsd / 3600);
         }, 1000);
+
+        calculationDone.current = true;
 
         return () => clearInterval(interval);
       }
