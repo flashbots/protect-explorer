@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import fetchClickhouseClient from '../../lib/fetchClickhouseClient';
 import { useFetchCSV } from '../../lib/fetchCSV';
 import { useFetchEthUSD } from '../../lib/fetchEthUSD';
 import { useDataContext } from '../../context/DataContext';
@@ -15,7 +16,7 @@ const colors = [
 ];
 
 const Table: React.FC = () => {
-  const { state } = useDataContext();
+  const { state, dispatch } = useDataContext();
   const fetchCSV = useFetchCSV();
   const fetchEthUSD = useFetchEthUSD();
   const [activeTab, setActiveTab] = useState<'leaderboard' | 'transactions'>('transactions');
@@ -24,8 +25,24 @@ const Table: React.FC = () => {
   const resultsPerPage = 25;
 
   useEffect(() => {
-    const dates = getDateRange(dateRange);
-    fetchCSV(dates);
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_DATA_START' });
+      try {
+        const dates = getDateRange(dateRange);
+        await fetchCSV(dates);
+        const clickhouseData = await fetchClickhouseClient();
+        console.log(clickhouseData)
+        dispatch({ type: 'FETCH_CLICKHOUSE_DATA_SUCCESS', payload: clickhouseData });
+      } catch (error) {
+        if (error instanceof Error) {
+          dispatch({ type: 'FETCH_DATA_FAILURE', payload: error.message });
+        } else {
+          dispatch({ type: 'FETCH_DATA_FAILURE', payload: 'An unknown error occurred' });
+        }
+      }
+    };
+
+    fetchData();
   }, [dateRange]);
 
   const handleTabChange = (tab: 'leaderboard' | 'transactions') => {
@@ -85,7 +102,7 @@ const Table: React.FC = () => {
         {state.loading ? (
           <div className='pt-10'>Loading...</div>
         ) : activeTab === 'leaderboard' ? (
-          <LeaderboardTable />
+          <LeaderboardTable colors={colors} data={state.clickhouseData} />
         ) : (
           <>
             <TransactionsTable data={paginatedData} colors={colors} state={state} fetchEthUSD={fetchEthUSD} />

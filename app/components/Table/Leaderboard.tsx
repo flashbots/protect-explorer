@@ -1,66 +1,63 @@
 import React from 'react';
-import styles from './Table.module.css';
 
-const colors = [
-  '--hero-4',
-  '--hero-5',
-  '--hero-6',
-  '--hero-7',
-  '--hero-8',
-  '--hero-9',
-  '--hero-10',
-  '--hero-11',
-  '--hero-12',
-  '--hero-13',
-  '--hero-14',
-  '--hero-15',
-];
+interface TransformedData {
+  project: string;
+  totalTxns: string;
+  refundsEth: number;
+}
 
-const Leaderboard: React.FC = () => {
+interface LeaderboardProps {
+  colors: string[];
+  data: { columns: any[]; rows: any[] };
+}
+
+const Leaderboard: React.FC<LeaderboardProps> = ({ colors, data }) => {
+  const transformedData = transformAndSortData(data);
+
   return (
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className={styles.tableHeading}>
+    <table className="min-w-full divide-y divide-gray-200 text-[10px] md:text-sm border border-2 border-white">
+      <thead className="bg-durple">
         <tr>
-          <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden md:table-cell">
+          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
             Project
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-            Logo
-          </th>
-          <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
             Total Txns
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
             Refunds (ETH)
-          </th>
-          <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden md:table-cell">
-            Refunds ($)
           </th>
         </tr>
       </thead>
-      <tbody className="bg-black divide-y divide-gray-200">
-        {[...Array(10)].map((_, index) => (
+      <tbody className="divide-y divide-gray-200">
+        {transformedData.map((item, index) => (
           <tr key={index}>
-            <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell" style={{ color: `var(${colors[index % colors.length]})` }}>
-              Project Name
+            <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
+              {item.project}
             </td>
             <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-              <img src="/path/to/logo.png" alt="Logo" className="h-10 w-10"/>
+              {item.totalTxns}
             </td>
             <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-              123
-            </td>
-            <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
-              1.23
-            </td>
-            <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell" style={{ color: `var(${colors[index % colors.length]})` }}>
-              $456
+              {item.refundsEth.toFixed(2)}
             </td>
           </tr>
         ))}
       </tbody>
     </table>
   );
+};
+
+const transformAndSortData = (data: { columns: any[]; rows: any[] }): TransformedData[] => {
+  const transformedData: TransformedData[] = data.rows.map((row: any): TransformedData => ({
+    project: row[0],
+    totalTxns: row[1],
+    refundsEth: parseFloat(row[2]),
+  }));
+
+  transformedData.sort((a: TransformedData, b: TransformedData) => b.refundsEth - a.refundsEth);
+
+  return transformedData;
 };
 
 export default Leaderboard;

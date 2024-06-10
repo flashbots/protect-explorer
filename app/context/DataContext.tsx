@@ -5,19 +5,23 @@ type State = {
   ethPrices: { [date: string]: number };
   loading: boolean;
   error: string | null;
+  clickhouseData: { columns: any[]; rows: any[] };
 };
 
 type Action =
   | { type: 'FETCH_DATA_START' }
   | { type: 'FETCH_DATA_SUCCESS'; payload: any[] }
   | { type: 'FETCH_DATA_FAILURE'; payload: string }
-  | { type: 'SET_ETH_PRICE'; payload: { date: string; price: number } };
+  | { type: 'SET_ETH_PRICE'; payload: { date: string; price: number } }
+  | { type: 'FETCH_CLICKHOUSE_DATA_SUCCESS'; payload: { columns: any[]; rows: any[] } }
+  | { type: 'FETCH_CLICKHOUSE_DATA_FAILURE'; payload: string };
 
 const initialState: State = {
   data: [],
   ethPrices: {},
   loading: false,
   error: null,
+  clickhouseData: { columns: [], rows: [] },
 };
 
 const dataReducer = (state: State, action: Action): State => {
@@ -30,6 +34,10 @@ const dataReducer = (state: State, action: Action): State => {
       return { ...state, loading: false, error: action.payload };
     case 'SET_ETH_PRICE':
       return { ...state, ethPrices: { ...state.ethPrices, [action.payload.date]: action.payload.price } };
+    case 'FETCH_CLICKHOUSE_DATA_SUCCESS':
+      return { ...state, loading: false, clickhouseData: action.payload };
+    case 'FETCH_CLICKHOUSE_DATA_FAILURE':
+      return { ...state, loading: false, error: action.payload };
     default:
       return state;
   }
