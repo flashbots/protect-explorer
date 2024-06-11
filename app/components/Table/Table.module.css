@@ -46,12 +46,6 @@
     padding: 20px;
 }
 
-.tableContent {
-    color: white;
-    font-size: 16px;
-    margin-top: 58px;
-}
-
 @media (max-width: 768px) {
     .tableContainer {
         top: 82%;

@@ -9,20 +9,10 @@ export const useFetchEthUSD = () => {
     }
 
     try {
-      const timestamp = new Date(date).getTime() / 1000;
-
-      const requestOptions: RequestInit = {
-        method: 'GET',
-        redirect: 'follow' as RequestRedirect,
-        headers: {
-          'Authorization': `Apikey ${process.env.NEXT_PUBLIC_CRYPTOCOMPARE_API_KEY}`,
-        }
-      };
-
-      const response = await fetch(`https://min-api.cryptocompare.com/data/pricehistorical?fsym=ETH&tsyms=USD&ts=${timestamp}`, requestOptions);
+      const response = await fetch(`/api/fetch-eth-usd?date=${date}`);
       const result = await response.json();
 
-      const price = result.ETH.USD;
+      const price = result.price;
       if (price) {
         dispatch({ type: 'SET_ETH_PRICE', payload: { date, price } });
         return price;

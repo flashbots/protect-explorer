@@ -4,11 +4,11 @@ import Stars from '../Stars/Stars';
 import { Alchemy, Network } from 'alchemy-sdk';
 
 interface StarProps {
-    top: number;
-    left: number;
-    duration: number;
-    size: number;
-    color: string;
+  top: number;
+  left: number;
+  duration: number;
+  size: number;
+  color: string;
 } 
 
 const config = {
@@ -18,21 +18,21 @@ const config = {
 const alchemy = new Alchemy(config);
 
 const colors = [
-    'color(display-p3 0.1889 0.0624 0.4576)',
-    'color(display-p3 0.2802 0.062 0.558)',
-    'color(display-p3 0.37 0.1073 0.6327)',
-    'color(display-p3 0.4853 0.1469 0.6927)',
-    'color(display-p3 0.5891 0.232 0.808)',
-    'color(display-p3 0.888 0.312 0.648)',
-    'color(display-p3 0.9569 0.4505 0.3725)',
-    'color(display-p3 0.9765 0.5686 0.3647)',
-    'color(display-p3 0.9843 0.651 0.451)',
-    'color(display-p3 0.9922 0.7804 0.5765)',
-    'color(display-p3 1 0.9095 0.6766)',
-    'color(display-p3 1 0.9567 0.74)',
-    'color(display-p3 1 0.9961 0.898)',
-    'color(display-p3 1 0.9922 0.8196)',
-    'color(display-p3 1 0.9961 0.898)'
+  'color(display-p3 0.1889 0.0624 0.4576)',
+  'color(display-p3 0.2802 0.062 0.558)',
+  'color(display-p3 0.37 0.1073 0.6327)',
+  'color(display-p3 0.4853 0.1469 0.6927)',
+  'color(display-p3 0.5891 0.232 0.808)',
+  'color(display-p3 0.888 0.312 0.648)',
+  'color(display-p3 0.9569 0.4505 0.3725)',
+  'color(display-p3 0.9765 0.5686 0.3647)',
+  'color(display-p3 0.9843 0.651 0.451)',
+  'color(display-p3 0.9922 0.7804 0.5765)',
+  'color(display-p3 1 0.9095 0.6766)',
+  'color(display-p3 1 0.9567 0.74)',
+  'color(display-p3 1 0.9961 0.898)',
+  'color(display-p3 1 0.9922 0.8196)',
+  'color(display-p3 1 0.9961 0.898)'
 ];
   
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
@@ -81,20 +81,22 @@ const AddressChecker: React.FC = () => {
     setChecked(true);
     setTotalRefund(totalRefundValue || 0);
 
-    const newStarsArray = [];
-    for (let i = 0; i < 100; i++) {
-      const top = Math.random() * 100;
-      const left = Math.random() * 100;
-      const duration = Math.random() * 2 + 1;
-      const color = getRandomColor();
-      newStarsArray.push({ top, left, duration, size: 3, color });
+    if (totalRefundValue > 0) {
+      const newStarsArray = [];
+      for (let i = 0; i < 100; i++) {
+        const top = Math.random() * 100;
+        const left = Math.random() * 100;
+        const duration = Math.random() * 2 + 1;
+        const color = getRandomColor();
+        newStarsArray.push({ top, left, duration, size: 3, color });
+      }
+      setNewStars(newStarsArray);
     }
-    setNewStars(newStarsArray);
   };
 
   return (
     <div className="absolute top-[120px] md:top-[120px] w-4/5 md:w-full h-[330px] md:h-[300px] left-1/2 transform -translate-x-1/2 flex flex-col items-center bg-spurple border-2 border-white rounded-lg p-5" style={{ zIndex: '1', maxWidth: '800px' }}>
-      {checked && (<Stars count={0} newStars={newStars} />)}
+      {checked && totalRefund! > 0 && (<Stars count={0} newStars={newStars} />)}
       <div className="mt-2 text-white text-xl mb-5">
         <p>See what you&apos;ve saved with Protect</p>
       </div>
@@ -124,7 +126,7 @@ const AddressChecker: React.FC = () => {
             <div className="my-2 text-white" style={{ visibility: totalRefund === 0 ? 'visible' : 'hidden' }}>
               <p>No transactions found for this address in the last 30 days.</p>
             </div>
-            <div className="mt-6">
+            <div className={`mt-6 ${totalRefund === 0 ? 'wiggle' : 'hidden'}`}>
               <a
                 href="https://protect.flashbots.net"
                 target="_blank"

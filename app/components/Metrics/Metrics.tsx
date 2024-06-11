@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useDataContext } from '../../context/DataContext';
-import { useFetchEthUSD } from '../../lib/fetchEthUSD';
+import { useFetchEthUSD } from '../../lib/fetchEthUsdClient';
 
 const calculateMedian = (values: number[]): number => {
   if (values.length === 0) return 0;
@@ -21,23 +21,16 @@ const Metrics: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [dynamicVolume, setDynamicVolume] = useState<number>(0);
+  const [dynamicTxes, setDynamicTxes] = useState<number>(0);
+  const [dynamicUsers, setDynamicUsers] = useState<number>(0);
 
   const calculationDone = useRef(false);
 
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const result1 = await fetch(`https://api.dune.com/api/v1/query/3396976/results`, {
-          headers: {
-            'X-Dune-API-Key': process.env.NEXT_PUBLIC_DUNE_API_KEY || '',
-          },
-        }).then(res => res.json());
-
-        const result2 = await fetch(`https://api.dune.com/api/v1/query/3397208/results`, {
-          headers: {
-            'X-Dune-API-Key': process.env.NEXT_PUBLIC_DUNE_API_KEY || '',
-          },
-        }).then(res => res.json());
+        const response = await fetch('/api/fetch-dune');
+        const { result1, result2 } = await response.json();
 
         if (result1 && result2) {
           setMetrics({
@@ -45,7 +38,9 @@ const Metrics: React.FC = () => {
             totalProtectedUsers: result1.result.rows[0].num_protect_user,
             totalProtectedDexVolume: result2.result.rows[0].total_volume,
           });
-          setDynamicVolume(result2.result.rows[0].total_volume); // Start from the current value
+          setDynamicVolume(result2.result.rows[0].total_volume);
+          setDynamicTxes(result1.result.rows[0].num_protect_tx_hash);
+          setDynamicUsers(result1.result.rows[0].num_protect_user);
         }
       } catch (error) {
         console.error('Error fetching metrics:', error);
@@ -92,15 +87,40 @@ const Metrics: React.FC = () => {
 
         const medianRefundValueUsd = medianRefundValueEth * ethUsdPriceToday;
 
-        console.log('Median Refund Value (USD):', medianRefundValueUsd);
-
-        const interval = setInterval(() => {
+        const volumeInterval = setInterval(() => {
           setDynamicVolume((prevVolume) => prevVolume + medianRefundValueUsd / 3600);
         }, 1000);
 
+        const latestDate = new Date();
+        latestDate.setDate(latestDate.getDate() - 2);
+        const latestDateString = latestDate.toISOString().split('T')[0];
+
+        const latestData = state.data.filter((d: any) => d.date === latestDateString);
+        
+        // Calculate dynamic txes
+        const numTxes = latestData.length;
+        const txesIntervalSeconds = 3600 / numTxes;
+        console.log(txesIntervalSeconds)
+
+        const txesInterval = setInterval(() => {
+          setDynamicTxes((prevTxes) => prevTxes + 1);
+        }, txesIntervalSeconds * 1000);
+
+        // Calculate dynamic users
+        const uniqueUsers = new Set(latestData.map((d: any) => d.user_tx_from)).size;
+        const usersIntervalSeconds = 3600 / uniqueUsers;
+
+        const usersInterval = setInterval(() => {
+          setDynamicUsers((prevUsers) => prevUsers + 1);
+        }, usersIntervalSeconds * 1000);
+
         calculationDone.current = true;
 
-        return () => clearInterval(interval);
+        return () => {
+          clearInterval(volumeInterval);
+          clearInterval(txesInterval);
+          clearInterval(usersInterval);
+        };
       }
     };
 
@@ -115,15 +135,15 @@ const Metrics: React.FC = () => {
   return (
     <div className="absolute top-[460px] left-1/2 transform -translate-x-1/2 flex flex-col md:flex-row justify-around w-4/5 md:w-full max-w-[1200px]" style={{ zIndex: '1' }}>
       <div className="bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2 mb-4 md:mb-0">
-        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Total Txes Protected</h3>
-        <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : metrics.totalProtectedTxes?.toLocaleString('en-US')}</p>
+        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Total Transactions</h3>
+        <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : dynamicTxes.toLocaleString('en-US')}</p>
       </div>
       <div className="bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2 mb-4 md:mb-0">
-        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Total Users Protected</h3>
-        <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : metrics.totalProtectedUsers?.toLocaleString('en-US')}</p>
+        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Total Users</h3>
+        <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : dynamicUsers.toLocaleString('en-US')}</p>
       </div>
       <div className="bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2">
-        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">DEX Volume Protected</h3>
+        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">DEX Volume</h3>
         <p className="text-sm md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : formatCurrency(dynamicVolume)}</p>
       </div>
     </div>

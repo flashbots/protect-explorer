@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import fetchClickhouseClient from '../../lib/fetchClickhouseClient';
 import { useFetchCSV } from '../../lib/fetchCSV';
-import { useFetchEthUSD } from '../../lib/fetchEthUSD';
+import { useFetchEthUSD } from '../../lib/fetchEthUsdClient';
 import { useDataContext } from '../../context/DataContext';
 import DatePicker from '../DatePicker/DatePicker';
 import Pagination from '../Pagination/Pagination';
@@ -31,7 +31,6 @@ const Table: React.FC = () => {
         const dates = getDateRange(dateRange);
         await fetchCSV(dates);
         const clickhouseData = await fetchClickhouseClient();
-        console.log(clickhouseData)
         dispatch({ type: 'FETCH_CLICKHOUSE_DATA_SUCCESS', payload: clickhouseData });
       } catch (error) {
         if (error instanceof Error) {
@@ -97,14 +96,12 @@ const Table: React.FC = () => {
           Leaderboard
         </button>
       </div>
-      <DatePicker onDateChange={setDateRange} />
-      <div className={styles.tableContent}>
-        {state.loading ? (
-          <div className='pt-10'>Loading...</div>
-        ) : activeTab === 'leaderboard' ? (
+      <div>
+        {activeTab === 'leaderboard' ? (
           <LeaderboardTable colors={colors} data={state.clickhouseData} />
         ) : (
           <>
+            <DatePicker onDateChange={setDateRange} />
             <TransactionsTable data={paginatedData} colors={colors} state={state} fetchEthUSD={fetchEthUSD} />
             <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
           </>
