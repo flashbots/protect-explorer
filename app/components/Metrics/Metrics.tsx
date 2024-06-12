@@ -87,45 +87,44 @@ const Metrics: React.FC = () => {
 
         const medianRefundValueUsd = medianRefundValueEth * ethUsdPriceToday;
 
-        const volumeInterval = setInterval(() => {
-          setDynamicVolume((prevVolume) => prevVolume + medianRefundValueUsd / 3600);
-        }, 1000);
-
+        // use latest data (as oppose to 30 day median) for txes + users
         const latestDate = new Date();
-        latestDate.setDate(latestDate.getDate() - 2);
+        latestDate.setDate(latestDate.getDate() - 2); // data from datasets is often 2 days old
         const latestDateString = latestDate.toISOString().split('T')[0];
-
         const latestData = state.data.filter((d: any) => d.date === latestDateString);
         
-        // Calculate dynamic txes
+        const intervalTiming = 12 // for 12s slots
         const numTxes = latestData.length;
-        const txesIntervalSeconds = 3600 / numTxes;
-        console.log(txesIntervalSeconds)
+        const txesPerSlot = numTxes / 3600 * intervalTiming
 
-        const txesInterval = setInterval(() => {
-          setDynamicTxes((prevTxes) => prevTxes + 1);
-        }, txesIntervalSeconds * 1000);
-
-        // Calculate dynamic users
         const uniqueUsers = new Set(latestData.map((d: any) => d.user_tx_from)).size;
-        const usersIntervalSeconds = 3600 / uniqueUsers;
+        const usersPerSlot = uniqueUsers / 3600 * intervalTiming
 
+        console.log("For the curious console hunter, our txes seen per slot are: ", txesPerSlot," and our unique users per slot are: ", usersPerSlot)
+        
+        // atm, we see ~1.14 txes per slot and 0.63 unique users. For now, then, we'll estimate this
+        // and increase txes by 1 every slot and users by 1 every second slot. Check these numbers every so often.
+        const interval = setInterval(() => {
+          setDynamicVolume((prevVolume) => prevVolume + medianRefundValueUsd / 3600 * intervalTiming);
+          setDynamicTxes((prevTxes) => prevTxes + 1)
+        }, intervalTiming * 1000);
+
+        // and increase num unique users separately
         const usersInterval = setInterval(() => {
           setDynamicUsers((prevUsers) => prevUsers + 1);
-        }, usersIntervalSeconds * 1000);
+        }, intervalTiming * 2000);
 
         calculationDone.current = true;
 
         return () => {
-          clearInterval(volumeInterval);
-          clearInterval(txesInterval);
+          clearInterval(interval);
           clearInterval(usersInterval);
         };
       }
     };
 
     calculateDynamicVolume();
-  }, [state.data, fetchEthUSD]);
+  }, [state.data]);
 
   const formatCurrency = (value: number | null) => {
     if (value === null) return 'Loading...';
@@ -139,7 +138,7 @@ const Metrics: React.FC = () => {
         <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : dynamicTxes.toLocaleString('en-US')}</p>
       </div>
       <div className="bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2 mb-4 md:mb-0">
-        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Total Users</h3>
+        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Unique Users</h3>
         <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : dynamicUsers.toLocaleString('en-US')}</p>
       </div>
       <div className="bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2">

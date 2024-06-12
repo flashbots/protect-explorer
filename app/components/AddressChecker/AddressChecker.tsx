@@ -42,7 +42,6 @@ const AddressChecker: React.FC = () => {
   const [address, setAddress] = useState('');
   const [checked, setChecked] = useState(false);
   const [totalRefund, setTotalRefund] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
   const [newStars, setNewStars] = useState<StarProps[]>([]);
   const { state } = useDataContext();
 
@@ -109,13 +108,9 @@ const AddressChecker: React.FC = () => {
           className="border border-gray-300 p-2 rounded mb-2.5 md:mb-0 mr-0 md:mr-2.5 flex-grow"
           style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
         />
-        {loading ? (
-          <div className="p-2 rounded text-white border-none cursor-not-allowed" style={{ backgroundColor: 'color(display-p3 0.37 0.1073 0.6327)' }}>Loading...</div>
-        ) : (
-          <button onClick={handleCheckAddress} className="p-2 rounded text-white border-none cursor-pointer no-underline hover:bg-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed" style={{ backgroundColor: 'color(display-p3 0.37 0.1073 0.6327)' }}>
-            Check
-          </button>
-        )}
+        <button onClick={handleCheckAddress} className="p-2 rounded text-white border-none cursor-pointer no-underline hover:bg-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed" style={{ backgroundColor: 'color(display-p3 0.37 0.1073 0.6327)' }}>
+          Check
+        </button>
       </div>
       <div className="flex flex-col items-center justify-center w-full h-full">
         {checked && (
