@@ -23,6 +23,9 @@ const Metrics: React.FC = () => {
   const [dynamicVolume, setDynamicVolume] = useState<number>(0);
   const [dynamicTxes, setDynamicTxes] = useState<number>(0);
   const [dynamicUsers, setDynamicUsers] = useState<number>(0);
+  const [showTxOverlay, setTxShowOverlay] = useState<boolean>(false);
+  const [showUserOverlay, setUserShowOverlay] = useState<boolean>(false);
+  const [showDexOverlay, setDexShowOverlay] = useState<boolean>(false);
 
   const calculationDone = useRef(false);
 
@@ -133,15 +136,42 @@ const Metrics: React.FC = () => {
 
   return (
     <div className="absolute top-[460px] left-1/2 transform -translate-x-1/2 flex flex-col md:flex-row justify-around w-4/5 md:w-full max-w-[1200px]" style={{ zIndex: '1' }}>
-      <div className="bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2 mb-4 md:mb-0">
+      <div className="relative group bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2 mb-4 md:mb-0">
+        <div className="absolute top-0 right-0 mt-1 mr-1">
+          <button onClick={() => setTxShowOverlay(true)} className="text-white text-sm bg-durple rounded-full w-6 h-6 flex items-center justify-center">i</button>
+        </div>
+        {showTxOverlay && (
+          <div className="absolute inset-0 bg-durple text-white text-xs flex flex-col items-center justify-center p-4 rounded-lg transition-all duration-300 ease-in-out">
+            <p>Many txes are sent to multiple RPCs, so this does not necessarily represent transactions solely protected by Flashbots.</p>
+            <button onClick={() => setTxShowOverlay(false)} className="absolute top-2 right-2 text-white">x</button>
+          </div>
+        )}
         <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Total Transactions</h3>
         <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : dynamicTxes.toLocaleString('en-US')}</p>
       </div>
-      <div className="bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2 mb-4 md:mb-0">
-        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Unique Users</h3>
+      <div className="relative group bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2 mb-4 md:mb-0">
+        <div className="absolute top-0 right-0 mt-1 mr-1">
+          <button onClick={() => setUserShowOverlay(true)} className="text-white text-sm bg-durple rounded-full w-6 h-6 flex items-center justify-center">i</button>
+        </div>
+        {showUserOverlay && (
+          <div className="absolute inset-0 bg-durple text-white text-xs flex flex-col items-center justify-center p-4 rounded-lg transition-all duration-300 ease-in-out">
+            <p>The same caveat applies as for txes. Check our methodology on <a className='text-brink underline' href="https://dune.com/flashbots/flashbots-protect-mevshare" target="_blank" rel="noopener noreferrer">Dune</a>.</p>
+            <button onClick={() => setUserShowOverlay(false)} className="absolute top-2 right-2 text-white">x</button>
+          </div>
+        )}
+        <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Total Users</h3>
         <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : dynamicUsers.toLocaleString('en-US')}</p>
       </div>
-      <div className="bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2">
+      <div className="relative group bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2">
+        <div className="absolute top-0 right-0 mt-1 mr-1">
+          <button onClick={() => setDexShowOverlay(true)} className="text-white text-sm bg-durple rounded-full w-6 h-6 flex items-center justify-center">i</button>
+        </div>
+        {showDexOverlay && (
+          <div className="absolute inset-0 bg-durple text-white text-xs flex flex-col items-center justify-center p-4 rounded-lg transition-all duration-300 ease-in-out">
+            <p>Check our methodology on <a className='text-brink underline' href="https://dune.com/flashbots/flashbots-protect-mevshare" target="_blank" rel="noopener noreferrer">Dune</a>.</p>
+            <button onClick={() => setDexShowOverlay(false)} className="absolute top-2 right-2 text-white">x</button>
+          </div>
+        )}
         <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">DEX Volume</h3>
         <p className="text-sm md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : formatCurrency(dynamicVolume)}</p>
       </div>

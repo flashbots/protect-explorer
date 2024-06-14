@@ -49,11 +49,15 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ colors, data }) => {
 };
 
 const transformAndSortData = (data: { columns: any[]; rows: any[] }): TransformedData[] => {
-  const transformedData: TransformedData[] = data.rows.map((row: any): TransformedData => ({
-    project: row[0],
-    totalTxns: row[1],
-    refundsEth: parseFloat(row[2]),
-  }));
+  const excludedProjects = ['eth_sendBundle:stage', 'vitaliy'];
+
+  const transformedData: TransformedData[] = data.rows
+    .filter((row: any) => !excludedProjects.includes(row[0]))
+    .map((row: any): TransformedData => ({
+      project: row[0],
+      totalTxns: row[1],
+      refundsEth: parseFloat(row[2]),
+    }));
 
   transformedData.sort((a: TransformedData, b: TransformedData) => b.refundsEth - a.refundsEth);
 
