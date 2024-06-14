@@ -72,6 +72,13 @@ const AddressChecker: React.FC = () => {
 
     setAddress(resolvedAddress);
 
+    const oldestTransactionDate = state.data.reduce((oldest, transaction) => {
+      const transactionDate = new Date(transaction.block_time);
+      return transactionDate < oldest ? transactionDate : oldest;
+    }, new Date());
+
+    console.log('Oldest transaction date:', oldestTransactionDate);
+
     const matchingTransactions = state.data.filter(transaction => transaction.user_tx_from === resolvedAddress);
     const totalRefundValue = matchingTransactions.reduce((total, transaction) => {
       return total + parseFloat(transaction.refund_value_eth);
@@ -94,9 +101,9 @@ const AddressChecker: React.FC = () => {
   };
 
   return (
-    <div className="absolute top-[120px] md:top-[120px] w-4/5 md:w-full h-[330px] md:h-[300px] left-1/2 transform -translate-x-1/2 flex flex-col items-center bg-spurple border-2 border-white rounded-lg p-5" style={{ zIndex: '1', maxWidth: '800px' }}>
+    <div className="absolute top-[120px] w-4/5 md:w-full h-[370px] md:h-[300px] left-1/2 transform -translate-x-1/2 flex flex-col items-center bg-spurple border-2 border-white rounded-lg p-5" style={{ zIndex: '1', maxWidth: '800px' }}>
       {checked && totalRefund! > 0 && (<Stars count={0} newStars={newStars} />)}
-      <div className="mt-2 text-white text-xl mb-5">
+      <div className="mt-2 text-white text-md md:text-xl mb-5">
         <p>See what you&apos;ve saved with Protect</p>
       </div>
       <div className="flex flex-col md:flex-row mb-2.5 w-full">
@@ -118,8 +125,8 @@ const AddressChecker: React.FC = () => {
             <div className="my-2 text-white">
               <p>Total Refund: {totalRefund} ETH</p>
             </div>
-            <div className="my-2 text-white" style={{ visibility: totalRefund === 0 ? 'visible' : 'hidden' }}>
-              <p>No transactions found for this address in the last 30 days.</p>
+            <div className="my-2 text-white text-xs md:text:md" style={{ visibility: totalRefund === 0 ? 'visible' : 'hidden' }}>
+              <p>No transactions found in the last 90 days.</p>
             </div>
             <div className={`mt-6 ${totalRefund === 0 ? 'wiggle' : 'hidden'}`}>
               <a

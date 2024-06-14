@@ -15,7 +15,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ colors, data }) => {
   const transformedData = transformAndSortData(data);
 
   return (
-    <table className="min-w-full divide-y divide-gray-200 text-[10px] md:text-sm border border-2 border-white mb-10">
+    <table className="min-w-full divide-y divide-gray-200 text-[10px] md:text-sm border border-2 border-white mb-4">
       <thead className="bg-durple">
         <tr>
           <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">

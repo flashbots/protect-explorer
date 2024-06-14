@@ -3,7 +3,6 @@ import fetchClickhouseClient from '../../lib/fetchClickhouseClient';
 import { useFetchCSV } from '../../lib/fetchCSV';
 import { useFetchEthUSD } from '../../lib/fetchEthUsdClient';
 import { useDataContext } from '../../context/DataContext';
-import DatePicker from '../DatePicker/DatePicker';
 import Pagination from '../Pagination/Pagination';
 import TransactionsTable from './Transactions';
 import LeaderboardTable from './Leaderboard';
@@ -19,8 +18,7 @@ const Table: React.FC = () => {
   const { state, dispatch } = useDataContext();
   const fetchCSV = useFetchCSV();
   const fetchEthUSD = useFetchEthUSD();
-  const [activeTab, setActiveTab] = useState<'leaderboard' | 'transactions'>('transactions');
-  const [dateRange, setDateRange] = useState<'today' | 'this_week' | 'this_month'>('this_month');
+  const [activeTab, setActiveTab] = useState<'leaderboard' | 'recentTransactions' | 'topTransactions'>('recentTransactions');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const resultsPerPage = 25;
 
@@ -28,10 +26,18 @@ const Table: React.FC = () => {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_DATA_START' });
       try {
-        const dates = getDateRange(dateRange);
-        await fetchCSV(dates);
+        // Fetch the latest data first
+        await fetchCSV(getDateRange('latest'));
+
+        // Fetch the last 30 days of data
+        await fetchCSV(getDateRange('last_30_days'));
+
+        // Fetch the Clickhouse data
         const clickhouseData = await fetchClickhouseClient();
         dispatch({ type: 'FETCH_CLICKHOUSE_DATA_SUCCESS', payload: clickhouseData });
+
+        // Continue fetching up to 90 days of data for AddressChecker
+        fetchCSV(getDateRange('last_90_days'));
       } catch (error) {
         if (error instanceof Error) {
           dispatch({ type: 'FETCH_DATA_FAILURE', payload: error.message });
@@ -42,9 +48,9 @@ const Table: React.FC = () => {
     };
 
     fetchData();
-  }, [dateRange]);
+  }, [dispatch]);
 
-  const handleTabChange = (tab: 'leaderboard' | 'transactions') => {
+  const handleTabChange = (tab: 'leaderboard' | 'recentTransactions' | 'topTransactions') => {
     setActiveTab(tab);
     setCurrentPage(1);
   };
@@ -53,24 +59,15 @@ const Table: React.FC = () => {
     setCurrentPage(page);
   };
 
-  const getDateRange = (range: 'today' | 'this_week' | 'this_month'): string[] => {
+  const getDateRange = (range: 'latest' | 'last_30_days' | 'last_90_days'): string[] => {
     const dates: string[] = [];
     const today = new Date();
-    today.setDate(today.getDate() - 2);
-    if (range === 'today') {
-      dates.push(formatDate(today));
-    } else if (range === 'this_week') {
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        dates.push(formatDate(date));
-      }
-    } else if (range === 'this_month') {
-      for (let i = 0; i < 30; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        dates.push(formatDate(date));
-      }
+    const days = range === 'latest' ? 2 : range === 'last_30_days' ? 30 : 90; 
+
+    for (let i = 1; i < days; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i); // latest data is a day old
+      dates.push(formatDate(date));
     }
     return dates;
   };
@@ -82,15 +79,37 @@ const Table: React.FC = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const sortedData = [...state.data].sort((a, b) => parseFloat(b.refund_value_eth) - parseFloat(a.refund_value_eth));
+  const getRecentTransactions = () => {
+    return state.data
+      .filter((transaction) => {
+        const transactionDate = new Date(transaction.block_time);
+        const today = new Date();
+        const twoDaysAgo = new Date(today);
+        twoDaysAgo.setDate(today.getDate() - 2);
+        return transactionDate >= twoDaysAgo && transactionDate <= today;
+      })
+      .sort((a, b) => new Date(b.block_time).getTime() - new Date(a.block_time).getTime());
+  };
+
+  const getTopTransactions = () => {
+    return state.data
+      .slice()
+      .sort((a, b) => parseFloat(b.refund_value_eth) - parseFloat(a.refund_value_eth))
+      .slice(0, 200);
+  };
+
+  const sortedData = activeTab === 'recentTransactions' ? getRecentTransactions() : getTopTransactions();
   const paginatedData = sortedData.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
   const totalPages = Math.ceil(sortedData.length / resultsPerPage);
 
   return (
     <div className={styles.tableContainer}>
       <div className={styles.nav}>
-        <button className={`${styles.navTab} ${activeTab === 'transactions' ? styles.active : ''}`} onClick={() => handleTabChange('transactions')}>
-          Recent Transactions
+        <button className={`${styles.navTab} ${activeTab === 'recentTransactions' ? styles.active : ''}`} onClick={() => handleTabChange('recentTransactions')}>
+          Recent Tx
+        </button>
+        <button className={`${styles.navTab} ${activeTab === 'topTransactions' ? styles.active : ''}`} onClick={() => handleTabChange('topTransactions')}>
+          Top Tx
         </button>
         <button className={`${styles.navTab} ${activeTab === 'leaderboard' ? styles.active : ''}`} onClick={() => handleTabChange('leaderboard')}>
           Leaderboard
@@ -101,7 +120,6 @@ const Table: React.FC = () => {
           <LeaderboardTable colors={colors} data={state.clickhouseData} />
         ) : (
           <>
-            <DatePicker onDateChange={setDateRange} />
             <TransactionsTable data={paginatedData} colors={colors} state={state} fetchEthUSD={fetchEthUSD} />
             <Pagination totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
           </>

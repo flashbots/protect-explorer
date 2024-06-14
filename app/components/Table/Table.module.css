@@ -48,26 +48,27 @@
 
 @media (max-width: 768px) {
     .tableContainer {
-        top: 82%;
+        top: 85%;
         padding: 0;
     }
 
     .nav {
-        top: -36px;
+        top: -26px;
     }
 
     .navTab {
         font-size: 10px;
+        padding: 5px;
     }
 }
 
 @media (max-width: 440px) {
     .tableContainer {
-        top: 112%;
+        top: 120%;
     }
 
     .nav {
-        top: -34px;
+        top: -25px;
     }
 
     .navTab {

@@ -135,8 +135,8 @@ const Metrics: React.FC = () => {
   };
 
   return (
-    <div className="absolute top-[460px] left-1/2 transform -translate-x-1/2 flex flex-col md:flex-row justify-around w-4/5 md:w-full max-w-[1200px]" style={{ zIndex: '1' }}>
-      <div className="relative group bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2 mb-4 md:mb-0">
+    <div className="absolute top-[500px] md:top-[460px] left-1/2 transform -translate-x-1/2 flex flex-col md:flex-row justify-around w-4/5 md:w-full max-w-[1200px]" style={{ zIndex: '1' }}>
+      <div className="relative group bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-0 md:mx-2 mb-4 md:mb-0">
         <div className="absolute top-0 right-0 mt-1 mr-1">
           <button onClick={() => setTxShowOverlay(true)} className="text-white text-sm bg-durple rounded-full w-6 h-6 flex items-center justify-center">i</button>
         </div>
@@ -149,7 +149,7 @@ const Metrics: React.FC = () => {
         <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Total Transactions</h3>
         <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : dynamicTxes.toLocaleString('en-US')}</p>
       </div>
-      <div className="relative group bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2 mb-4 md:mb-0">
+      <div className="relative group bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-0 md:mx-2 mb-4 md:mb-0">
         <div className="absolute top-0 right-0 mt-1 mr-1">
           <button onClick={() => setUserShowOverlay(true)} className="text-white text-sm bg-durple rounded-full w-6 h-6 flex items-center justify-center">i</button>
         </div>
@@ -162,7 +162,7 @@ const Metrics: React.FC = () => {
         <h3 className="mb-2 text-sm md:text-lg font-semibold text-durple">Total Users</h3>
         <p className="text-md md:text-2xl font-bold text-spurple">{loading ? 'Loading...' : dynamicUsers.toLocaleString('en-US')}</p>
       </div>
-      <div className="relative group bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-2">
+      <div className="relative group bg-brink border-2 border-durple rounded-lg p-2 md:p-5 text-center w-full md:w-1/3 mx-0 md:mx-2">
         <div className="absolute top-0 right-0 mt-1 mr-1">
           <button onClick={() => setDexShowOverlay(true)} className="text-white text-sm bg-durple rounded-full w-6 h-6 flex items-center justify-center">i</button>
         </div>
