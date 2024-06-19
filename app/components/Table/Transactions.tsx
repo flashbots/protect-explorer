@@ -26,19 +26,19 @@ const Transactions: React.FC<TransactionsProps> = ({ data, colors, state, fetchE
   };
 
   return (
-    <table className="min-w-full divide-y divide-gray-200 text-[10px] md:text-sm border border-2 border-white">
+    <table className="min-w-full table-fixed divide-y divide-gray-200 text-[10px] md:text-sm border border-2 border-white">
       <thead className="bg-durple">
         <tr>
-          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
+          <th className="w-1/4 px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
             Tx
           </th>
-          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
+          <th className="w-1/4 px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
             Builder
           </th>
-          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
+          <th className="w-1/4 px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider">
             Refund (ETH)
           </th>
-          <th className="px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
+          <th className="w-1/4 px-1 sm:px-6 py-3 text-left text-xxs sm:text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
             Refund ($)
           </th>
         </tr>
@@ -46,7 +46,7 @@ const Transactions: React.FC<TransactionsProps> = ({ data, colors, state, fetchE
       <tbody className="divide-y divide-gray-200">
         {data.map((transaction, index) => {
           const date = transaction.block_time.split(' ')[0].replace(/\//g, '-');
-          
+  
           return (
             <tr key={index}>
               <td className="px-2 py-2 md:px-6 md:py-4 whitespace-nowrap" style={{ color: `var(${colors[index % colors.length]})` }}>
@@ -68,7 +68,7 @@ const Transactions: React.FC<TransactionsProps> = ({ data, colors, state, fetchE
         })}
       </tbody>
     </table>
-  );
+  );  
 };
 
 export default Transactions;

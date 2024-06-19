@@ -64,9 +64,9 @@ const Table: React.FC = () => {
     const today = new Date();
     const days = range === 'latest' ? 2 : range === 'last_30_days' ? 30 : 90; 
 
-    for (let i = 1; i < days; i++) {
+    for (let i = 2; i < days; i++) {
       const date = new Date(today);
-      date.setDate(today.getDate() - i); // latest data is a day old
+      date.setDate(today.getDate() - i); // latest data is often two days old
       dates.push(formatDate(date));
     }
     return dates;

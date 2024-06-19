@@ -1,6 +1,6 @@
 .tableContainer {
     position: absolute;
-    top: 650px;
+    top: 550px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -48,12 +48,14 @@
 
 @media (max-width: 768px) {
     .tableContainer {
-        top: 85%;
+        top: 80%;
         padding: 0;
+        border: 1px solid white;
     }
 
     .nav {
         top: -26px;
+        left: -1px;
     }
 
     .navTab {

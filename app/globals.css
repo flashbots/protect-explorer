@@ -35,6 +35,14 @@ body {
   background-color: color(display-p3 1 0.9961 0.898)
 }
 
+td {
+  max-width: 300px;
+}
+
+th {
+  max-width: 300px;
+}
+
 @keyframes wiggle {
   0%, 100% {
     transform: rotate(-3deg);
