@@ -108,7 +108,7 @@ const Metrics: React.FC = () => {
         // atm, we see ~1.14 txes per slot and 0.63 unique users. For now, then, we'll estimate this
         // and increase txes by 1 every slot and users by 1 every second slot. Check these numbers every so often.
         const interval = setInterval(() => {
-          setDynamicVolume((prevVolume) => prevVolume + medianRefundValueUsd / 3600 * intervalTiming);
+          setDynamicVolume((prevVolume) => prevVolume + (medianRefundValueUsd / 3600) * intervalTiming);
           setDynamicTxes((prevTxes) => prevTxes + 1)
         }, intervalTiming * 1000);
 
@@ -155,7 +155,7 @@ const Metrics: React.FC = () => {
         </div>
         {showUserOverlay && (
           <div className="absolute inset-0 bg-durple text-white text-xs flex flex-col items-center justify-center p-4 rounded-lg transition-all duration-300 ease-in-out" onClick={() => setUserShowOverlay(false)}>
-            <p>Many txes are sent to multiple RPCs. This does not necessarily represent transactions solely protected by Flashbots. Check our methodology on <a className='text-brink underline' href="https://dune.com/flashbots/flashbots-protect-mevshare" target="_blank" rel="noopener noreferrer">Dune</a>.</p>
+            <p>Users can broadcast to multiple RPCs. This does not necessarily represent users solely protected by Flashbots. Check our methodology on <a className='text-brink underline' href="https://dune.com/flashbots/flashbots-protect-mevshare" target="_blank" rel="noopener noreferrer">Dune</a>.</p>
             <button onClick={(e) => { e.stopPropagation(); setUserShowOverlay(false); }} className="absolute top-2 right-2 text-white">x</button>
           </div>
         )}
