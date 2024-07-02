@@ -92,7 +92,7 @@ const Metrics: React.FC = () => {
 
         // use latest data (as oppose to 30 day median) for txes + users
         const latestDate = new Date();
-        latestDate.setDate(latestDate.getDate() - 2); // data from datasets is often 2 days old
+        latestDate.setDate(latestDate.getDate() - 3); // data from datasets is often 2 days old
         const latestDateString = latestDate.toISOString().split('T')[0];
         const latestData = state.data.filter((d: any) => d.date === latestDateString);
         
