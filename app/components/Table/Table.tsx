@@ -62,9 +62,9 @@ const Table: React.FC = () => {
   const getDateRange = (range: 'latest' | 'last_30_days' | 'last_90_days'): string[] => {
     const dates: string[] = [];
     const today = new Date();
-    const days = range === 'latest' ? 4 : range === 'last_30_days' ? 30 : 90; 
+    const days = range === 'latest' ? 2 : range === 'last_30_days' ? 30 : 90; 
 
-    for (let i = 4; i < days; i++) {
+    for (let i = 2; i < days; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() - i); // latest data is often two days old
       dates.push(formatDate(date));
@@ -85,7 +85,7 @@ const Table: React.FC = () => {
         const transactionDate = new Date(transaction.block_time);
         const today = new Date();
         const twoDaysAgo = new Date(today);
-        twoDaysAgo.setDate(today.getDate() - 4);
+        twoDaysAgo.setDate(today.getDate() - 2);
         return transactionDate >= twoDaysAgo && transactionDate <= today;
       })
       .sort((a, b) => new Date(b.block_time).getTime() - new Date(a.block_time).getTime());
