@@ -8,17 +8,17 @@ export default function Head() {
       <meta property="og:title" content="Flashbots Protect Explorer" />
       <meta property="og:description" content="Check your savings as you explore Flashbots Protect data!" />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://protect-explorer.vercel.app" />
-      <meta property="og:image" content="https://protect-explorer.vercel.app/opengraph-image.png" />
+      <meta property="og:url" content="https://protect.flashbots.net" />
+      <meta property="og:image" content="https://protect.flashbots.net/og-image.png" />
       <meta property="og:site_name" content="Flashbots Protect Explorer" />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content="Flashbots Protect Explorer" />
       <meta name="twitter:description" content="Check your savings as you explore Flashbots Protect data!" />
-      <meta name="twitter:image" content="https://protect-explorer.vercel.app/opengraph-image.png" />
+      <meta name="twitter:image" content="https://protect.flashbots.net/og-image.png" />
       <meta name="keywords" content="mev,flashbots,protect,blockchain,data,illuminate,democratize,distribute" />
       <meta name="robots" content="index, follow" />
       <meta name="googlebot" content="index, follow" />
-      <link rel="canonical" href="https://protect-explorer.vercel.app" />
+      <link rel="canonical" href="https://protect.flashbots.net" />
     </>
   )
 }
