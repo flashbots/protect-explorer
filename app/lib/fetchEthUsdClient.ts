@@ -9,7 +9,7 @@ export const useFetchEthUSD = () => {
     }
 
     try {
-      const response = await fetch(`/api/fetch-eth-usd?date=${date}`);
+      const response = await fetch(`/explorer/api/fetch-eth-usd?date=${date}`);
       const result = await response.json();
 
       const price = result.price;

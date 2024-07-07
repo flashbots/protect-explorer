@@ -30,7 +30,7 @@ const Metrics: React.FC = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const response = await fetch('/api/fetch-dune');
+        const response = await fetch('/explorer/api/fetch-dune');
         const { result1, result2 } = await response.json();
 
         if (result1 && result2) {

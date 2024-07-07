@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: 'dogicapixel';
-  src: url('/dogicapixel.otf') format('opentype');
+  src: url('/explorer/dogicapixel.otf') format('opentype');
 }
 
 .font-dogicapixel {

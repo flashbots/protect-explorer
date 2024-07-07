@@ -5,7 +5,7 @@
 
 .heroStaticDots {
     z-index: 1;
-    background-image: url('/dots.png');
+    background-image: url('/explorer/dots.png');
     background-size: 16px 1156px;
     background-repeat: repeat-x;
     image-rendering: pixelated;
