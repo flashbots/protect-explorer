@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useDataContext } from '../../context/DataContext';
 import Stars from '../Stars/Stars';
-import { Alchemy, Network } from 'alchemy-sdk';
 
 interface StarProps {
   top: number;
@@ -10,12 +9,6 @@ interface StarProps {
   size: number;
   color: string;
 } 
-
-const config = {
-  apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
-  network: Network.ETH_MAINNET,
-};
-const alchemy = new Alchemy(config);
 
 const colors = [
   'color(display-p3 0.1889 0.0624 0.4576)',
@@ -47,9 +40,10 @@ const AddressChecker: React.FC = () => {
 
   const resolveENS = async (name: string) => {
     try {
-      const resolvedAddress = await alchemy.core.resolveName(name);
-      if (resolvedAddress) {
-        return resolvedAddress;
+      const response = await fetch(`/explorer/api/fetch-alchemy?name=${encodeURIComponent(name)}`);
+      const data = await response.json();
+      if (data.address) {
+        return data.address;
       }
     } catch (error) {
       console.error('Error resolving ENS name:', error);
