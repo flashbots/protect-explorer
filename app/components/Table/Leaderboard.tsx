@@ -49,7 +49,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ colors, data }) => {
 };
 
 const transformAndSortData = (data: { columns: any[]; rows: any[] }): TransformedData[] => {
-  const excludedProjects = ['eth_sendBundle:stage', 'vitaliy', 'okxmevprotection690'];
+  const excludedProjects = ['eth_sendBundle:stage', 'vitaliy', 'okxmevprotection690', 'rabby'];
 
   const transformProjectName = (project: string): string => {
     if (project === 'definitivefi-4CDB2F5C1622') {
