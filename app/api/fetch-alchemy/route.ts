@@ -1,26 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { Alchemy, Network } from 'alchemy-sdk';
+import { NextResponse } from 'next/server';
+import { ethers } from "ethers";
 
-const config = {
-  apiKey: process.env.ALCHEMY_API_KEY,
-  network: Network.ETH_MAINNET,
-};
+const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`);
 
-const alchemy = new Alchemy(config);
-
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
   const name = searchParams.get('name');
 
   if (!name) {
-    return NextResponse.json({ error: 'Name parameter is required' }, { status: 400 });
+    return NextResponse.json({ error: 'ENS name is required' }, { status: 400 });
   }
 
   try {
-    const resolvedAddress = await alchemy.core.resolveName(name);
-    return NextResponse.json({ address: resolvedAddress });
+    const address = await provider.resolveName(name);
+
+    if (address === null) {
+      return NextResponse.json({ error: 'ENS name not found or has no address set' }, { status: 404 });
+    }
+
+    return NextResponse.json({ address });
   } catch (error) {
-    console.error('Error resolving ENS name:', error);
-    return NextResponse.json({ error: 'Error resolving ENS name' }, { status: 500 });
+    console.error("Error resolving ENS name:", error);
+    return NextResponse.json({ error: 'Failed to resolve ENS name' }, { status: 500 });
   }
 }

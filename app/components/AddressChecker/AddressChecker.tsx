@@ -37,10 +37,11 @@ const AddressChecker: React.FC = () => {
   const [totalRefund, setTotalRefund] = useState<number | null>(null);
   const [newStars, setNewStars] = useState<StarProps[]>([]);
   const { state } = useDataContext();
+  const [isChecking, setIsChecking] = useState(false);
 
   const resolveENS = async (name: string) => {
     try {
-      const response = await fetch(`/explorer/api/fetch-alchemy?name=${encodeURIComponent(name)}`);
+      const response = await fetch(`/explorer/api/fetch-alchemy?name=${name}`);
       const data = await response.json();
       if (data.address) {
         return data.address;
@@ -51,7 +52,11 @@ const AddressChecker: React.FC = () => {
     return null;
   };
 
+  const MAX_ATTEMPTS = 10;
+  const RETRY_DELAY = 1000;
+
   const handleCheckAddress = async () => {
+    setIsChecking(true);
     let resolvedAddress = input;
 
     if (input.endsWith('.eth')) {
@@ -63,41 +68,53 @@ const AddressChecker: React.FC = () => {
         return;
       }
     } else {
-      resolvedAddress = input.toLowerCase(); // all addresses in mev-share csv data are not checksum'd
+      resolvedAddress = input.toLowerCase();
     }
 
     setAddress(resolvedAddress);
 
-    const oldestTransactionDate = state.data.reduce((oldest, transaction) => {
-      const transactionDate = new Date(transaction.block_time);
-      return transactionDate < oldest ? transactionDate : oldest;
-    }, new Date());
+    let attempts = 0;
+    const checkData = async () => {
+      const oldestTransactionDate = state.data.reduce((oldest, transaction) => {
+        const transactionDate = new Date(transaction.block_time);
+        return transactionDate < oldest ? transactionDate : oldest;
+      }, new Date());
 
-    console.log('Oldest transaction date:', oldestTransactionDate);
+      const currentDate = new Date();
+      const daysSinceOldestTransaction = (currentDate.getTime() - oldestTransactionDate.getTime()) / (1000 * 3600 * 24);
 
-    const matchingTransactions = state.data.filter(transaction => transaction.user_tx_from === resolvedAddress);
-    const totalRefundValue = matchingTransactions.reduce((total, transaction) => {
-      return total + parseFloat(transaction.refund_value_eth);
-    }, 0);
+      if (daysSinceOldestTransaction > 84 || attempts >= MAX_ATTEMPTS) {
+        const matchingTransactions = state.data.filter(transaction => transaction.user_tx_from === resolvedAddress);
+        const totalRefundValue = matchingTransactions.reduce((total, transaction) => {
+          return total + parseFloat(transaction.refund_value_eth);
+        }, 0);
 
-    setChecked(true);
-    setTimeout(() => {
-      setChecked(false);
-      setInput('');
-    }, 5000);
-    setTotalRefund(totalRefundValue || 0);
+        setChecked(true);
+        setTimeout(() => {
+          setChecked(false);
+          setInput('');
+        }, 5000);
+        setTotalRefund(totalRefundValue || 0);
 
-    if (totalRefundValue > 0) {
-      const newStarsArray = [];
-      for (let i = 0; i < 100; i++) {
-        const top = Math.random() * 100;
-        const left = Math.random() * 100;
-        const duration = Math.random() * 2 + 1;
-        const color = getRandomColor();
-        newStarsArray.push({ top, left, duration, size: 3, color });
+        if (totalRefundValue > 0) {
+          const newStarsArray = [];
+          for (let i = 0; i < 100; i++) {
+            const top = Math.random() * 100;
+            const left = Math.random() * 100;
+            const duration = Math.random() * 2 + 1;
+            const color = getRandomColor();
+            newStarsArray.push({ top, left, duration, size: 3, color });
+          }
+          setNewStars(newStarsArray);
+        }
+        setIsChecking(false);
+      } else {
+        attempts++;
+        setTimeout(checkData, RETRY_DELAY);
       }
-      setNewStars(newStarsArray);
-    }
+    };
+
+    checkData();
   };
 
   return (
@@ -117,8 +134,13 @@ const AddressChecker: React.FC = () => {
           style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
         />
         {!checked && (
-          <button onClick={handleCheckAddress} className="p-2 w-4/5 md:w-1/3 mx-auto mt-8 rounded text-white border-none cursor-pointer no-underline hover:bg-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed" style={{ backgroundColor: 'color(display-p3 0.37 0.1073 0.6327)' }}>
-            Check
+          <button 
+            onClick={handleCheckAddress} 
+            className="p-2 w-4/5 md:w-1/3 mx-auto mt-8 rounded text-white border-none cursor-pointer no-underline hover:bg-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed" 
+            style={{ backgroundColor: 'color(display-p3 0.37 0.1073 0.6327)' }}
+            disabled={isChecking}
+          >
+            {isChecking ? "Checking..." : "Check"}
           </button>
         )}
       </div>
