@@ -89,10 +89,8 @@ const Metrics: React.FC = () => {
         const medianRefundValueUsd = medianRefundValueEth * ethUsdPriceToday;
 
         // use latest data (as oppose to 30 day median) for txes + users
-        const latestDate = new Date();
-        latestDate.setDate(latestDate.getDate() - 6); // data from datasets is often 2 days old
-        const latestDateString = latestDate.toISOString().split('T')[0];
-        const latestData = state.data.filter((d: any) => d.date === latestDateString);
+        const latestDate = state.latestDateFetched;
+        const latestData = state.data.filter((d: any) => d.date === latestDate);
         
         const intervalTiming = 12 // for 12s slots
         const numTxes = latestData.length;

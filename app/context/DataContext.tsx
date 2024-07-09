@@ -6,6 +6,7 @@ type State = {
   loading: boolean;
   error: string | null;
   clickhouseData: { columns: any[]; rows: any[] };
+  latestDateFetched: string | null;
 };
 
 type Action =
@@ -14,7 +15,8 @@ type Action =
   | { type: 'FETCH_DATA_FAILURE'; payload: string }
   | { type: 'SET_ETH_PRICE'; payload: { date: string; price: number } }
   | { type: 'FETCH_CLICKHOUSE_DATA_SUCCESS'; payload: { columns: any[]; rows: any[] } }
-  | { type: 'FETCH_CLICKHOUSE_DATA_FAILURE'; payload: string };
+  | { type: 'FETCH_CLICKHOUSE_DATA_FAILURE'; payload: string }
+  | { type: 'SET_LATEST_DATE_FETCHED'; payload: string };
 
 const initialState: State = {
   data: [],
@@ -22,6 +24,7 @@ const initialState: State = {
   loading: false,
   error: null,
   clickhouseData: { columns: [], rows: [] },
+  latestDateFetched: null,
 };
 
 const dataReducer = (state: State, action: Action): State => {
@@ -38,6 +41,8 @@ const dataReducer = (state: State, action: Action): State => {
       return { ...state, loading: false, clickhouseData: action.payload };
     case 'FETCH_CLICKHOUSE_DATA_FAILURE':
       return { ...state, loading: false, error: action.payload };
+    case 'SET_LATEST_DATE_FETCHED':
+      return { ...state, latestDateFetched: action.payload };
     default:
       return state;
   }

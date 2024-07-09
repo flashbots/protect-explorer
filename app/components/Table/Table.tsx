@@ -26,18 +26,9 @@ const Table: React.FC = () => {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_DATA_START' });
       try {
-        // Fetch the latest data first
-        await fetchCSV(getDateRange('latest'));
-
-        // Fetch the last 30 days of data
-        await fetchCSV(getDateRange('last_30_days'));
-
-        // Fetch the Clickhouse data
+        await fetchCSV(90);
         const clickhouseData = await fetchClickhouseClient();
         dispatch({ type: 'FETCH_CLICKHOUSE_DATA_SUCCESS', payload: clickhouseData });
-
-        // Continue fetching up to 90 days of data for AddressChecker
-        fetchCSV(getDateRange('last_90_days'));
       } catch (error) {
         if (error instanceof Error) {
           dispatch({ type: 'FETCH_DATA_FAILURE', payload: error.message });
@@ -59,34 +50,17 @@ const Table: React.FC = () => {
     setCurrentPage(page);
   };
 
-  const getDateRange = (range: 'latest' | 'last_30_days' | 'last_90_days'): string[] => {
-    const dates: string[] = [];
-    const today = new Date();
-    const days = range === 'latest' ? 6 : range === 'last_30_days' ? 30 : 90; 
-
-    for (let i = 6; i < days; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i); // latest data is often two days old
-      dates.push(formatDate(date));
-    }
-    return dates;
-  };
-
-  const formatDate = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
   const getRecentTransactions = () => {
+    if (!state.latestDateFetched) return [];
+  
+    const latestDate = new Date(state.latestDateFetched);
+    
+    // Get transactions from the last 7 days (including the latest date)
     return state.data
       .filter((transaction) => {
         const transactionDate = new Date(transaction.block_time);
-        const today = new Date();
-        const twoDaysAgo = new Date(today);
-        twoDaysAgo.setDate(today.getDate() - 6);
-        return transactionDate >= twoDaysAgo && transactionDate <= today;
+        const daysDifference = (latestDate.getTime() - transactionDate.getTime()) / (1000 * 3600 * 24);
+        return daysDifference >= 0 && daysDifference < 7;
       })
       .sort((a, b) => new Date(b.block_time).getTime() - new Date(a.block_time).getTime());
   };
