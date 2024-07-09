@@ -76,6 +76,17 @@ const transformAndSortData = (data: { columns: any[]; rows: any[] }): Transforme
           refundsEth,
         };
       }
+    } else if (projectName === 'bulldog' || projectName === 'tokenlon') {
+      if (projectData['tokenlon']) {
+        projectData['tokenlon'].totalTxns += totalTxns;
+        projectData['tokenlon'].refundsEth += refundsEth;
+      } else {
+        projectData['tokenlon'] = {
+          project: 'tokenlon',
+          totalTxns,
+          refundsEth,
+        };
+      }
     } else if (!excludedProjects.includes(projectName)) {
       if (projectData[projectName]) {
         projectData[projectName].totalTxns += totalTxns;
@@ -95,5 +106,6 @@ const transformAndSortData = (data: { columns: any[]; rows: any[] }): Transforme
 
   return transformedData;
 };
+
 
 export default Leaderboard;
