@@ -40,14 +40,39 @@ export const useFetchCSV = () => {
       if (!latestDate) {
         throw new Error('No data available for the last 7 days');
       }
-
       dispatch({ type: 'SET_LATEST_DATE_FETCHED', payload: latestDate });
-
+  
       const dates = getDatesArray(latestDate, daysToFetch);
-      const data = await Promise.all(dates.map(date => fetchCSVForDate(date)));
-      dispatch({ type: 'FETCH_DATA_SUCCESS', payload: data.flat() });
+      const results = await Promise.all(
+        dates.map(async (date) => {
+          try {
+            const data = await fetchCSVForDate(date);
+            return { date, data, success: true };
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.log(`Failed to fetch data for ${date}: ${errorMessage}`);
+            return { date, data: null, success: false };
+          }
+        })
+      );
+  
+      const successfulData = results
+        .filter((result) => result.success)
+        .map((result) => result.data)
+        .flat();
+  
+      dispatch({ type: 'FETCH_DATA_SUCCESS', payload: successfulData });
+  
+      const failedDates = results
+        .filter((result) => !result.success)
+        .map((result) => result.date);
+  
+      if (failedDates.length > 0) {
+        console.log(`Failed to fetch data for the following dates: ${failedDates.join(', ')}`);
+      }
     } catch (error) {
-      dispatch({ type: 'FETCH_DATA_FAILURE', payload: 'Error fetching data' });
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      dispatch({ type: 'FETCH_DATA_FAILURE', payload: errorMessage });
     }
   };
 
